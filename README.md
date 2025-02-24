@@ -1,24 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<a href="#"><img width="100%" height="auto" src="https://miro.medium.com/v2/resize:fit:1400/1*BVJujJHLjF2SksDEZPLyUw.png" height="175px"/></a>
 
-## Getting Started
+<h1 align="center">DataDash Dashboard</h1>
 
-First, run the development server:
+## 🚀 Teknologi yang dipakai:
+
+<p align="center"> 
+    <img src="https://img.icons8.com/officel/48/000000/react.png"/>
+    <img src="https://img.icons8.com/color/48/000000/figma--v1.png"/>
+    <img src="https://img.icons8.com/fluency/48/000000/node-js.png"/>
+</p>
+
+
+## Tentang Project
+---
+Project Practice React Native Slicing UI, Learn Component, React Hook and many more
+
+## What has been sliced?
+```bash
+1. Onboarding Screen
+2. Login Screen
+3. Home Screen
+4. Profile Screen
+```
+## Learning Proccess ?
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. Instalation
+2. Stucture Folder
+3. Slicing Method
+4. React Hook
+5. React
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Initial Commit Message
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
--   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+1. CMP = Component Update
+2. SC = Screen Update
+3. FC = Function Update
+4. ST = State Update
+5. RV = Revision Update
+```
