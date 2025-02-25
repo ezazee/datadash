@@ -1,21 +1,105 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
-import { LayoutContext } from '../../../../layout/context/layoutcontext';
+import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 const LoginPage = () => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [checked, setChecked] = useState(false);
+    const [message, setMessage] = useState('');
     const { layoutConfig } = useContext(LayoutContext);
-
     const router = useRouter();
-    const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
+    const [loading, setLoading] = useState(false);
+
+    const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', {
+        'p-input-filled': layoutConfig.inputStyle === 'filled'
+    });
+
+    // Validasi Email  (Harus dipindahkan bersama dengan handle Login)
+    const validateEmail = (email: string) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
+
+    // Handle Login (HARUS DI RAPIKAN NANTI)
+    const handleLogin = async (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+
+        // Validasi input
+        if (!email || !password) {
+            setMessage('Email and password are required');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setMessage('Invalid email format');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            // Kirim permintaan POST ke API route
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userId', data.userId);
+                localStorage.setItem('expirationTime', expirationTime.toString());
+
+                // Redirect ke dashboard
+                router.push('/');
+            } else {
+                setMessage(data.message || 'An error occurred while logging in');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            setMessage('An error occurred while logging in');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //   Function Pembacaan session
+    useEffect(() => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userId = localStorage.getItem('userId');
+        const expirationTime = localStorage.getItem('expirationTime');
+
+        if (isLoggedIn && userId && expirationTime) {
+            const currentTime = new Date().getTime();
+            if (currentTime < parseInt(expirationTime)) {
+                router.push('/');
+            } else {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('expirationTime');
+            }
+        }
+    }, [router]);
+
+    //   Function Afar Tidak bisa di back setelah login
+    useEffect(() => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (isLoggedIn) {
+            router.push('/');
+        }
+    }, [router]);
 
     return (
         <div className={containerClassName}>
@@ -30,33 +114,22 @@ const LoginPage = () => {
                 >
                     <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                         <div className="text-center mb-5">
-                            <img src="/demo/images/login/avatar.png" alt="Image" height="50" className="mb-3" />
-                            <div className="text-900 text-3xl font-medium mb-3">Welcome, Isabel!</div>
+                            <div className="text-900 text-3xl font-medium mb-3">Welcome To DataDash Hacker!!</div>
                             <span className="text-600 font-medium">Sign in to continue</span>
                         </div>
-
-                        <div>
+                        <form onSubmit={handleLogin}>
                             <label htmlFor="email1" className="block text-900 text-xl font-medium mb-2">
                                 Email
                             </label>
-                            <InputText id="email1" type="text" placeholder="Email address" className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />
-
+                            <InputText id="email1" type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />
                             <label htmlFor="password1" className="block text-900 font-medium text-xl mb-2">
                                 Password
                             </label>
-                            <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password>
-
-                            <div className="flex align-items-center justify-content-between mb-5 gap-5">
-                                <div className="flex align-items-center">
-                                    <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
-                                    <label htmlFor="rememberme1">Remember me</label>
-                                </div>
-                                <a className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
-                                    Forgot password?
-                                </a>
-                            </div>
-                            <Button label="Sign In" className="w-full p-3 text-xl" onClick={() => router.push('/')}></Button>
-                        </div>
+                            <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} feedback={false} tabIndex={1} placeholder="Enter Password" className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password>
+                            <div className="flex align-items-center justify-content-between mb-5 gap-5"></div>
+                            {loading ? <ProgressSpinner className="flex align-items-center" /> : <Button label="Sign In" className="w-full p-3 text-xl" onClick={handleLogin}></Button>}
+                            {message && <p className="text-red-500 mt-3">{message}</p>}
+                        </form>
                     </div>
                 </div>
             </div>

@@ -6,14 +6,14 @@ interface AppLayoutProps {
 }
 
 export const metadata: Metadata = {
-    title: 'PrimeReact Sakai',
-    description: 'The ultimate collection of design-agnostic, flexible and accessible React UI Components.',
+    title: 'DataDash',
+    description: 'Dashboard Management CVE & Tools',
     robots: { index: false, follow: false },
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
     openGraph: {
         type: 'website',
-        title: 'PrimeReact SAKAI-REACT',
-        description: 'The ultimate collection of design-agnostic, flexible and accessible React UI Components.',
+        title: 'DataDash',
+        description: 'Dashboard Management CVE & Tools.',
         images: ['https://www.primefaces.org/static/social/sakai-react.png'],
         ttl: 604800
     },
