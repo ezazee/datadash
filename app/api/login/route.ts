@@ -1,14 +1,20 @@
-// File: app/api/login/route.ts
 import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: { json: () => PromiseLike<{ email: any; password: any; }> | { email: any; password: any; }; }) {
-  const { email, password } = await req.json();
-
+export async function POST(request: NextRequest) {
   try {
-    // Debug: Cek koneksi database
+    // Ambil data dari request body
+    const { email, password } = await request.json();
+
+    // Validasi input
+    if (!email || !password) {
+      return NextResponse.json({ message: 'Email dan password wajib diisi' }, { status: 400 });
+    }
+
+    // Cek koneksi database
     await prisma.$connect();
     console.log('Connected to database');
 
@@ -16,27 +22,24 @@ export async function POST(req: { json: () => PromiseLike<{ email: any; password
     const user = await prisma.user.findUnique({
       where: { email },
     });
-    console.log('User found:', user);
 
     // Jika user tidak ditemukan
     if (!user) {
-      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 });
+      return NextResponse.json({ message: 'Email atau password salah' }, { status: 401 });
     }
 
     // Verifikasi password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log('Password valid:', isPasswordValid);
 
-    // Jika password tidak valid
     if (!isPasswordValid) {
-      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 });
+      return NextResponse.json({ message: 'Email atau password salah' }, { status: 401 });
     }
 
-    // Login berhasil
-    return new Response(JSON.stringify({ message: 'Login successful', userId: user.id }), { status: 200 });
+    // Jika login berhasil
+    return NextResponse.json({ message: 'Login berhasil', userId: user.id }, { status: 200 });
   } catch (error) {
     console.error('Error during login:', error);
-    return new Response(JSON.stringify({ message: 'An error occurred while logging in' }), { status: 500 });
+    return NextResponse.json({ message: 'Terjadi kesalahan saat login' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
