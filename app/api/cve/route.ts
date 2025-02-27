@@ -3,14 +3,36 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+// Ambil semua CVE atau CVE tertentu berdasarkan ID
+export async function GET(req: Request) {
     try {
-      const cves = await prisma.cve.findMany();
+      const { searchParams } = new URL(req.url);
+      const id = searchParams.get('id');
 
-      // Validasi untuk mengatasi null pada dorkingList
+      if (id) {
+        // Ambil detail CVE berdasarkan id
+        const cve = await prisma.cve.findUnique({
+          where: { id },
+        });
+
+        if (!cve) {
+          return new Response(JSON.stringify({ message: 'CVE not found' }), { status: 404 });
+        }
+
+        // Validasi dorkingList agar tidak null
+        const sanitizedCve = {
+          ...cve,
+          dorkingList: cve.dorkingList || [],
+        };
+
+        return new Response(JSON.stringify(sanitizedCve), { status: 200 });
+      }
+
+      // Ambil semua CVE jika tidak ada parameter id
+      const cves = await prisma.cve.findMany();
       const sanitizedCves = cves.map((cve) => ({
         ...cve,
-        dorkingList: cve.dorkingList || [], // Ganti null dengan array kosong
+        dorkingList: cve.dorkingList || [],
       }));
 
       return new Response(JSON.stringify(sanitizedCves), { status: 200 });
@@ -20,8 +42,9 @@ export async function GET() {
     } finally {
       await prisma.$disconnect();
     }
-  }
+}
 
+// Tambah CVE baru
 export async function POST(req: Request) {
   try {
     const data = await req.json();
@@ -39,6 +62,7 @@ export async function POST(req: Request) {
   }
 }
 
+// Update CVE berdasarkan id
 export async function PUT(req: Request) {
   try {
     const data = await req.json();
@@ -57,6 +81,7 @@ export async function PUT(req: Request) {
   }
 }
 
+// Hapus CVE berdasarkan id
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
