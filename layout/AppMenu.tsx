@@ -17,14 +17,13 @@ const AppMenu = () => {
         {
             label: 'CVE Information',
             items: [
-                { label: 'CVE List', icon: 'pi pi-fw pi-id-card', to: '/cve-list' },
+                { label: 'CVE List', icon: 'pi pi-fw pi-id-card', to: '/pages/cve-list' },
             ]
         },
         {
             label: 'Tools',
             items: [
-                { label: 'HTML Generator', icon: 'pi pi-fw pi-eye', to: '/blocks', badge: 'NEW' },
-                { label: 'Ahref Checker', icon: 'pi pi-fw pi-globe', url: 'https://blocks.primereact.org', target: '_blank' }
+                { label: 'HTML Generator', icon: 'pi pi-fw pi-eye', to: '/' },
             ]
         },
     ];

@@ -7,17 +7,13 @@ import axios from 'axios';
 import { Menu } from 'primereact/menu';
 import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
+import { Profile } from '@/types/profile';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } = useContext(LayoutContext);
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
-
-    interface Profile {
-        name: string;
-        email: string;
-    }
 
     const [profile, setProfile] = useState<Profile | null>(null);
 

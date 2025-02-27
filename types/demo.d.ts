@@ -61,6 +61,16 @@ export interface AppMailReplyProps {
 }
 
 declare namespace Demo {
+
+    interface CVE {
+        inventoryStatus: any;
+        id: string;
+        title: string;
+        description: string;
+        severity: string;
+    }
+
+
     interface Task {
         id?: number;
         name?: string;

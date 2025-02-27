@@ -1,7 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
-import { Checkbox } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -12,7 +11,6 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [checked, setChecked] = useState(false);
     const [message, setMessage] = useState('');
     const { layoutConfig } = useContext(LayoutContext);
     const router = useRouter();
